@@ -7,6 +7,25 @@ type ThemeProviderProps = {
   storageKey?: string;
 };
 
+function useSystemTheme() {
+  const [systemTheme, setSystemTheme] = useState<"light" | "dark">(() =>
+    window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setSystemTheme(e.matches ? "dark" : "light");
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  return systemTheme;
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
@@ -17,23 +36,17 @@ export function ThemeProvider({
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
 
+  const systemTheme = useSystemTheme();
+
   useEffect(() => {
+    console.log("Setting theme:", theme, "System theme:", systemTheme);
     const root = window.document.documentElement;
 
     root.classList.remove("light", "dark");
 
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-
-      root.classList.add(systemTheme);
-      return;
-    }
-
-    root.classList.add(theme);
-  }, [theme]);
+    const effectiveTheme = theme === "system" ? systemTheme : theme;
+    root.classList.add(effectiveTheme);
+  }, [theme, systemTheme]);
 
   const value = {
     theme,

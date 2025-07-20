@@ -40,14 +40,11 @@ export const ButtonClickBox = ({
     >
       {clicks && clicks?.times.length > 0 ? (
         <div className="flex flex-row justify-between w-full h-full overflow-hidden">
-          <div className="flex flex-col items-center justify-center gap-2 grow-1">
-            <span>{clicks.type}</span>
-            <div className="flex flex-row gap-1 items-center">
-              <span className="text-3xl text-primary font-black">
-                {clicks.times.length}
-              </span>
-              <span>clicks</span>
-            </div>
+          <div className="flex flex-row gap-2 items-center grow-1 justify-center">
+            <span className="text-3xl text-primary font-black">
+              {clicks.times.length}
+            </span>
+            <span>{clicks.type} clicks</span>
           </div>
           <ScrollArea className="px-8 m-2">
             {clicks.times.map((time, index) => {
@@ -71,10 +68,10 @@ export const ButtonClickBox = ({
           </ScrollArea>
         </div>
       ) : (
-        <>
+        <div className="flex flex-row items-center gap-8">
           <MousePointerClick className="w-24 h-24 text-primary" />
-          <span className="italic">click here</span>
-        </>
+          <span className="italic">start by clicking here</span>
+        </div>
       )}
     </div>
   );
